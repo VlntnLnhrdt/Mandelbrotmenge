@@ -1,7 +1,7 @@
 public class Controller {
 
 
-    // Hier könntest du z.B. die Logik zum heranzoomen einfügen (Wenn Mausklick -> erstelle neue, herangezoomte map)
+    // Hier könntest  du z.B. die Logik zum heranzoomen einfügen (Wenn Mausklick -> erstelle neue, herangezoomte map)
 
     Map map;
 

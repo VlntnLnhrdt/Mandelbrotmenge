@@ -3,7 +3,7 @@ import javafx.scene.paint.Color;
 
 public class Map {
 
-    Pixel[][] mapGrid;// Die map besteht aus Pixel-Elementen
+    Pixel[][] mapGrid;// Die  map besteht aus Pixel-Elementen
     Group mapGroup;
 
     Map(int mapSize) {

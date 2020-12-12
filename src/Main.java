@@ -8,10 +8,12 @@ import javafx.stage.Stage;
 public class Main  extends Application {
 
     /**
+     *
      * pixelSize = Größe der einzelnen Rechtecke (Höhe und Breite)
      * mapSize = Anzahl der Pixel-Spalten / -Zeilen
      * rgbRange = verhinderrung von Magic-Numbers
      * windowSize = größe des App-Fensters (Höhe und Breite)
+     *
      */
     final static int pixelSize = 10, mapSize = 80, rgbRange = 255, windowSize = 800;
 

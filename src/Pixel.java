@@ -17,7 +17,7 @@ public class Pixel {
 
    void setFill(Color color){
 
-       ((Rectangle)rectangle).setFill(color);//das würde nicht gehen, wenn Zeile 11 nicht so wäre, wie sie jetzt ist
+       ((Rectangle)rectangle).setFill(color);//das würde  nicht gehen, wenn Zeile 11 nicht so wäre, wie sie jetzt ist
 
    }
 
