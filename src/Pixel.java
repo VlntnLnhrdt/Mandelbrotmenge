@@ -8,7 +8,7 @@ public class Pixel {
 
     Pixel(int x, int y, Color color) {
 
-        rectangle = new Rectangle(x * Main.rectSize, y * Main.rectSize, Main.rectSize, Main.rectSize);
+        rectangle = new Rectangle(x * Main.pixelSize, y * Main.pixelSize, Main.pixelSize, Main.pixelSize); // eine Node mit den Eigenschaften eines Rectangles wird erstellt
 
         setFill(color);
 
@@ -17,7 +17,7 @@ public class Pixel {
 
    void setFill(Color color){
 
-       ((Rectangle)rectangle).setFill(color);
+       ((Rectangle)rectangle).setFill(color);//das würde nicht gehen, wenn Zeile 11 nicht so wäre, wie sie jetzt ist
 
    }
 
