@@ -1,3 +1,5 @@
+package baseContruction;
+
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -9,29 +11,21 @@ public class Main  extends Application {
 
     /**
      *
-     * pixelSize = Größe der einzelnen Rechtecke (Höhe und Breite)
-     * mapSize = Anzahl der Pixel-Spalten / -Zeilen
-     * rgbRange = verhinderrung von Magic-Numbers
-     * windowSize = größe des App-Fensters (Höhe und Breite)
+     * windowSizeHeight = Höhe des App-Fensters
+     * windowSizeWidth = Breite des App-Fensters
      *
      */
-    final static int pixelSize = 10, mapSize = 80, rgbRange = 255, windowSize = 800;
+
+    final static int windowSizeHeight = 1080, windowSizeWidth = 1920;
 
     private Parent createContent(){
 
         Pane root = new Pane();
-
-
         Controller con = new Controller();
 
         con.makeMap();
 
-        root.getChildren().add(con.map.mapGroup); // wenn Sachen angezeigt werden  sollen, müssen diese root hinzugefügt werden
-        //root nimmt Nodes und auch Group-Elemente, die Nodes enthalten
-
-
-
-        //root.setBackground(new Background(new BackgroundFill(Color.BLACK, CornerRadii.EMPTY, Insets.EMPTY))); damit könnte man theorethisch den Hintergrund schwarz einfärben
+        root.getChildren().add(con.map.mapGroup);
 
         return root;
     }
@@ -41,13 +35,11 @@ public class Main  extends Application {
 
         primaryStage.setScene(new Scene(createContent()));
 
-        primaryStage.setHeight(windowSize);
-        primaryStage.setWidth(windowSize);
-
-
+        primaryStage.setHeight(windowSizeHeight);
+        primaryStage.setWidth(windowSizeWidth);
+        primaryStage.setTitle("Linhardt, Valentin 2020 - Seminararbeit: Die Mandelbrotmenge als mathematisches und künstlerisches Objekt");
 
         primaryStage.show();
 
     }
-
 }

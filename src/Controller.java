@@ -1,17 +1,15 @@
+package baseContruction;
+
 public class Controller {
 
-
-    // Hier könntest  du z.B. die Logik zum heranzoomen einfügen (Wenn Mausklick -> erstelle neue, herangezoomte map)
+    // Vorbereitung für Zooming-Logik
 
     Map map;
 
     void makeMap(){
 
-        map = new Map(Main.mapSize);
+        map = new Map(Main.windowSizeHeight, Main.windowSizeWidth);
         map.generateMap();
 
     }
-
-
-
 }
