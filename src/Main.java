@@ -14,7 +14,7 @@ public class Main  extends Application {
      *
      */
 
-    final static int windowSizeHeight = 1080, windowSizeWidth = 1920;
+    //final static int windowSizeHeight = 1080, windowSizeWidth = 1920;
 
     private Parent createContent(){
 
@@ -33,9 +33,9 @@ public class Main  extends Application {
 
         primaryStage.setScene(new Scene(createContent()));
 
-        primaryStage.setHeight(windowSizeHeight);
-        primaryStage.setWidth(windowSizeWidth);
-        primaryStage.setTitle("Linhardt, Valentin 2020 - Seminararbeit: Die Mandelbrotmenge als mathematisches und künstlerisches Objekt");
+        primaryStage.setHeight(Properties.WINDOW_HEIGHT);
+        primaryStage.setWidth(Properties.WINDOW_WIDTH);
+        primaryStage.setTitle(Properties.WINDOW_TITLE);
 
         primaryStage.show();
 

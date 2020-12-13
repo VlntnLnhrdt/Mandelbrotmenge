@@ -6,7 +6,7 @@ public class Controller {
 
     void makeMap(){
 
-        map = new Map(Main.windowSizeHeight, Main.windowSizeWidth);
+        map = new Map(Properties.WINDOW_HEIGHT, Properties.WINDOW_WIDTH);
         map.generateMap();
 
     }
