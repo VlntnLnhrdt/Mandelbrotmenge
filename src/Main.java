@@ -7,15 +7,6 @@ import javafx.stage.Stage;
 
 public class Main  extends Application {
 
-    /**
-     *
-     * windowSizeHeight = Höhe des App-Fensters
-     * windowSizeWidth = Breite des App-Fensters
-     *
-     */
-
-    //final static int windowSizeHeight = 1080, windowSizeWidth = 1920;
-
     private Parent createContent(){
 
         Pane root = new Pane();
