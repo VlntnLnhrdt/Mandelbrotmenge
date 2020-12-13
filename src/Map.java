@@ -50,7 +50,6 @@ public class Map {
 
         /* (03) */
         final ComplexNumber c = new ComplexNumber();
-        c.setRealImag(Properties.REAL_START, Properties.IMAG_START);
         /* (04) */
         ComplexNumber z = new ComplexNumber();
 
@@ -73,6 +72,8 @@ public class Map {
                 /* (08) */
                 imagMath = imagCords*scale;
 
+                c.setRealImag(realMath, imagMath);
+
                 /* (09) */
                 z.setRealImag(realMath,imagMath);
 
@@ -93,7 +94,6 @@ public class Map {
                 if (paint){
                     mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
                     mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
-                    System.out.println("drin");
                 }
 
                 /* (14) */

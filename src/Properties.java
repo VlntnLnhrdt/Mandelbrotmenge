@@ -14,7 +14,7 @@ public class Properties {
     final public static int WINDOW_CENTER_VER = WINDOW_HEIGHT/2;    // Genau mittig (imaginäre Zahlen ausgeglichen)
 
 
-    final public static int ITERATIONS = 400;
+    final public static int ITERATIONS = 1000;
     final public static double REAL_LENGTH = 2.5;
     final public static double IMAG_LENGTH = 2.5;
     final public static double REAL_START = 1;
