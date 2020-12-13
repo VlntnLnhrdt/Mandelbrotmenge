@@ -1,5 +1,3 @@
-package baseContruction;
-
 public class Controller {
 
     // Vorbereitung für Zooming-Logik

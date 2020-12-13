@@ -1,5 +1,3 @@
-package baseContruction;
-
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
