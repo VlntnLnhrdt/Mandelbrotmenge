@@ -6,8 +6,7 @@ public class Pixel {
 
     /**
     *
-    * Erzeugt die einzelnen Pixel
-    * Gibt diesen auch ihren Farbwert
+    * Stellt einen Pixel dar
     *
     */
 

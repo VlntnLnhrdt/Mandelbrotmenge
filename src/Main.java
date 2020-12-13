@@ -7,6 +7,13 @@ import javafx.stage.Stage;
 
 public class Main  extends Application {
 
+
+    /**
+     *
+     * Nur zur genrellen Darstellung eines Fensters und Starten des Programmes
+     *
+     * */
+
     private Parent createContent(){
 
         Pane root = new Pane();
@@ -24,8 +31,8 @@ public class Main  extends Application {
 
         primaryStage.setScene(new Scene(createContent()));
 
-        primaryStage.setHeight(Properties.WINDOW_HEIGHT);
-        primaryStage.setWidth(Properties.WINDOW_WIDTH);
+        primaryStage.setHeight(Properties.WINDOW_HEIGHT+37);
+        primaryStage.setWidth(Properties.WINDOW_WIDTH+13);
         primaryStage.setTitle(Properties.WINDOW_TITLE);
 
         primaryStage.show();

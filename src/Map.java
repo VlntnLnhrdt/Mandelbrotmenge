@@ -3,9 +3,32 @@ import javafx.scene.paint.Color;
 
 public class Map {
 
+    /**
+     *
+     * Erstellung der Oberfläche, bzw. Zuweisung der Pixel mit entsprechender Farbe
+     *
+     * Genereller Ablauf:
+     * 01. Erzeugen einer noch leeren "Map" der Oberfläche
+     * 02. Berechnung des Maßstabs zwischen Fenstergröße und den Achsen
+     * 03. Erzeugen der komplexen Zahl "c", welche bei jeder Rechnung addiert wird und konstant ist
+     * 04. Erzeugen der komplexen Zahl "z", welche quadriert, dann mit "c" addiert und als nächstes "z" hergenommen wird
+     * 05. Boolean "paint" dient nur dazu, den Code schneller zu machen, kann ignoriert werden, wird in anderem Dokument genuer erklärt
+     * 06. Durchlaufen der Map in Richtung des Realen- sowie Imaginären-Teils der komplexen Zahl
+     * 07. Berechnen der Koordinaten der Pixel, da bei der Oberfläche der Ursprung links oben im Fenster ist (wird hierdurch indirekt in die Mitte verlegt)
+     * 08. Berechnen der mathematischen Zahl, basierend auf den soeben berechneten Koordinaten
+     * 09. Setzen der Zahl für "z"
+     * 10. Durchlaufen der Rechnung so oft, wie in "Properties" unter "ITERATIONS" angegeben
+     * 11. Quadrieren und Addieren der komplexen Zahl(en)
+     * 12. Prüfen ob der Reale-Teil von "z" schon außerhalb der "magischen" Grenzen liegt (wird in Seminararbeit erklärt)
+     * 13. Färben des Pixels in Schwarz, falls "paint" true ist
+     * 14. Zeichnen der Achsen (else if aufgrund der schnelleren Ausführung)
+     *
+     */
+
     Pixel[][] mapGrid; // Eine Map (multiDimensionales Array) für zukünftige Pixel wird erzeugt
     Group mapGroup;
 
+    /* (01) */
     Map(int mapHeight, int mapWidth) {
 
         mapGrid = new Pixel[mapWidth][mapHeight]; // Festlegen der Größe
@@ -14,16 +37,71 @@ public class Map {
     }
 
     void generateMap() {
+        // Hinzufügen der einzelnen Pixel zur Oberfläche
 
-        // Hier werden die Pixel mit zugehörigen Farben hinzugefügt (aktuell nur einfarbig)
+        /* (02) */
+        // Verhältnis zwischen Achsenbeschriftung und Fenstergröße
+        double scale = Properties.REAL_LENGTH/Properties.WINDOW_WIDTH;
 
-        for (int i = 0; i < mapGrid.length - 1; i++) {
+        double realCords;
+        double realMath;
+        double imagCords;
+        double imagMath;
 
-            for (int j = 0; j < mapGrid[i].length; j++) {
+        /* (03) */
+        final ComplexNumber c = new ComplexNumber();
+        c.setRealImag(Properties.REAL_START, Properties.IMAG_START);
+        /* (04) */
+        ComplexNumber z = new ComplexNumber();
 
-                mapGrid[i][j] = new Pixel(i, j, Color.rgb(27,213,213));
+        /* (05) */
+        boolean paint;
 
-                mapGroup.getChildren().add(mapGrid[i][j].getRectangle());
+        /* (06) */
+        for (int real = 0; real < mapGrid.length; real++) {
+            /* (06) */
+            for (int imag = 0; imag < mapGrid[real].length; imag++) {
+                paint = true;
+
+                /* (07) */
+                realCords = real-Properties.WINDOW_CENTER_HOR;
+                /* (08) */
+                realMath = realCords*scale;
+
+                /* (07) */
+                imagCords = imag-Properties.WINDOW_CENTER_VER;
+                /* (08) */
+                imagMath = imagCords*scale;
+
+                /* (09) */
+                z.setRealImag(realMath,imagMath);
+
+                /* (10) */
+                // Iterationen mit z² + c bzw (z*z)+c ergibt z für nächste Iteration
+                for (int iter=0;iter<Properties.ITERATIONS;iter++) {
+                    /* (11) */
+                     z.square();
+                     z.adding(c);
+                    /* (12) */
+                     if (z.real<-2 || z.real>0.5) {
+                         paint = false;
+                         break;
+                     }
+                }
+
+                /* (13) */
+                if (paint){
+                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
+                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
+                    System.out.println("drin");
+                }
+
+                /* (14) */
+                // Zeichnen der Achsen
+                else if (real == Properties.WINDOW_CENTER_HOR || imag == Properties.WINDOW_CENTER_VER) {
+                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
+                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
+                }
 
             }
         }
