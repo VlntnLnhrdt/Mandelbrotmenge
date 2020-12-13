@@ -4,9 +4,8 @@ import javafx.scene.paint.Color;
 public class Map {
 
     /**
-     *
      * Erstellung der Oberfläche, bzw. Zuweisung der Pixel mit entsprechender Farbe
-     *
+     * <p>
      * Genereller Ablauf:
      * 01. Erzeugen einer noch leeren "Map" der Oberfläche
      * 02. Berechnung des Maßstabs zwischen Fenstergröße und den Achsen
@@ -22,11 +21,11 @@ public class Map {
      * 12. Prüfen ob der Reale-Teil von "z" schon außerhalb der "magischen" Grenzen liegt (wird in Seminararbeit erklärt)
      * 13. Färben des Pixels in Schwarz, falls "paint" true ist
      * 14. Zeichnen der Achsen (else if aufgrund der schnelleren Ausführung)
-     *
      */
 
     Pixel[][] mapGrid; // Eine Map (multiDimensionales Array) für zukünftige Pixel wird erzeugt
     Group mapGroup;
+    int numberIterations = 0;
 
     /* (01) */
     Map(int mapHeight, int mapWidth) {
@@ -41,7 +40,7 @@ public class Map {
 
         /* (02) */
         // Verhältnis zwischen Achsenbeschriftung und Fenstergröße
-        double scale = Properties.REAL_LENGTH/Properties.WINDOW_WIDTH;
+        double scale = Properties.REAL_LENGTH / Properties.WINDOW_WIDTH;
 
         double realCords;
         double realMath;
@@ -63,36 +62,49 @@ public class Map {
                 paint = true;
 
                 /* (07) */
-                realCords = real-Properties.WINDOW_CENTER_HOR;
+                realCords = real - Properties.WINDOW_CENTER_HOR;
                 /* (08) */
-                realMath = realCords*scale;
+                realMath = realCords * scale;
 
                 /* (07) */
-                imagCords = imag-Properties.WINDOW_CENTER_VER;
+                imagCords = imag - Properties.WINDOW_CENTER_VER;
                 /* (08) */
-                imagMath = imagCords*scale;
+                imagMath = imagCords * scale;
 
                 c.setRealImag(realMath, imagMath);
 
                 /* (09) */
-                z.setRealImag(realMath,imagMath);
+                z.setRealImag(realMath, imagMath);
 
                 /* (10) */
                 // Iterationen mit z² + c bzw (z*z)+c ergibt z für nächste Iteration
-                for (int iter=0;iter<Properties.ITERATIONS;iter++) {
+                for (int iter = 0; iter < Properties.ITERATIONS; iter++) {
                     /* (11) */
-                     z.square();
-                     z.adding(c);
+                    z.square();
+                    z.adding(c);
+
+                    numberIterations = iter;
+
                     /* (12) */
-                     if (z.real<-2 || z.real>0.5) {
-                         paint = false;
-                         break;
-                     }
+                    if (z.real < -2 || z.real > 0.5) {
+                        paint = true;
+                        break;
+                    }
                 }
 
+
                 /* (13) */
-                if (paint){
-                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
+                if (paint) {
+
+                    //System.out.println(numberIterations);
+
+
+                    if(numberIterations % 2 == 0){
+                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb((int)(numberIterations * (255/ (double)Properties.ITERATIONS)), 0, 0));
+                    }else{
+                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0,(int)(numberIterations * (255/ (double)Properties.ITERATIONS)), 0));
+                    }
+
                     mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
                 }
 
