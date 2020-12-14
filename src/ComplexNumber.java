@@ -2,7 +2,7 @@ public class ComplexNumber {
 
     /**
      *
-     * Stellt eine komplexe Zahl dar mit den benötigten Rechnungen
+     * Stellt eine komplexe Zahl mit den benötigten Rechnungen dar
      *
      */
 

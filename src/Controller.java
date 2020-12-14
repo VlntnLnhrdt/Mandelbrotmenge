@@ -1,6 +1,6 @@
 public class Controller {
 
-    // Vorbereitung für Zooming-Logik
+    // Vorrausgedanke für Zooming-Logik
 
     Map map;
 
