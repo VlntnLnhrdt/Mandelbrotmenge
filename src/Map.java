@@ -64,7 +64,7 @@ public class Map {
         /* (05) */
         boolean paint;
 
-        int iterCount;
+        int iterCount = 0;
 
         /* (06) */
         for (int real = 0; real < mapGrid.length; real++) {
@@ -86,7 +86,7 @@ public class Map {
                 c.setRealImag(realMath, imagMath);
                 z.setRealImag(0, 0);
 
-                iterCount = 0;
+
 
                 /* (10) */
                 for (int iter = 0; iter < Properties.ITERATIONS; iter++) {
@@ -95,18 +95,27 @@ public class Map {
                     z.square();
                     z.adding(c);
 
-                    iterCount++;
+                    iterCount = iter;
 
                     /* (12) */
                     if (z.real < -2 || z.real > 0.5) {
-                        paint = false;
+                        paint = true;
+
                         break;
                     }
                 }
 
                 /* (13) */
                 if (paint || (real == Properties.WINDOW_CENTER_HOR || imag == Properties.WINDOW_CENTER_VER)) {
-                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0,0,0));
+
+
+                    if (iterCount < 255) {
+                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
+                    } else {
+                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
+                    }
+
+
                     mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
                 }
 

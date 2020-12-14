@@ -1,7 +1,14 @@
 import javafx.application.Application;
+import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 
@@ -13,10 +20,11 @@ public class Main  extends Application {
      * Nur zur genrellen Darstellung eines Fensters und Starten des Programmes
      *
      * */
+    Pane root;
 
     private Parent createContent(){
 
-        Pane root = new Pane();
+        root = new Pane();
         Controller con = new Controller();
 
         con.makeMap();
@@ -31,11 +39,28 @@ public class Main  extends Application {
     @Override
     public void start(Stage primaryStage){
 
+        int tmpX, tmpY;
+
         primaryStage.setScene(new Scene(createContent()));
 
         primaryStage.setHeight(Properties.WINDOW_HEIGHT+37);
         primaryStage.setWidth(Properties.WINDOW_WIDTH+13);
         primaryStage.setTitle(Properties.WINDOW_TITLE);
+
+
+        primaryStage.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+
+            if(event.getButton() == MouseButton.PRIMARY){
+
+            }else if(event.getButton() == MouseButton.SECONDARY){
+
+            }
+
+
+        });
+        primaryStage.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
+            System.out.println(event.getX() +"  "+event.getY());
+        });
 
         primaryStage.show();
 
