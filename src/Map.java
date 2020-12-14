@@ -1,6 +1,8 @@
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 
+import java.util.Date;
+
 public class Map {
 
     /**
@@ -37,6 +39,13 @@ public class Map {
     }
 
     void generateMap() {
+        // Infotext Anfang
+        int maxCals = Properties.WINDOW_WIDTH*Properties.WINDOW_WIDTH*Properties.ITERATIONS;
+        System.out.println("Anzahl max. Berechnungen: "+maxCals);
+        long startTime = new Date().getTime();
+        int realCalcs = 0;
+        // Infotext Ende
+
         // Hinzufügen der einzelnen Pixel zur Oberfläche
 
         /* (02) */
@@ -54,6 +63,8 @@ public class Map {
 
         /* (05) */
         boolean paint;
+
+        int iterCount;
 
         /* (06) */
         for (int real = 0; real < mapGrid.length; real++) {
@@ -75,11 +86,16 @@ public class Map {
                 c.setRealImag(realMath, imagMath);
                 z.setRealImag(0, 0);
 
+                iterCount = 0;
+
                 /* (10) */
                 for (int iter = 0; iter < Properties.ITERATIONS; iter++) {
+                    realCalcs++;
                     /* (11) */
                     z.square();
                     z.adding(c);
+
+                    iterCount++;
 
                     /* (12) */
                     if (z.real < -2 || z.real > 0.5) {
@@ -88,7 +104,6 @@ public class Map {
                     }
                 }
 
-
                 /* (13) */
                 if (paint) {
                     mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
@@ -96,12 +111,21 @@ public class Map {
                 }
 
                 /* (14) */
-                else if (real == Properties.WINDOW_CENTER_HOR || imag == Properties.WINDOW_CENTER_VER) {
+                if (real == Properties.WINDOW_CENTER_HOR || imag == Properties.WINDOW_CENTER_VER) {
                     mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
                     mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
                 }
 
             }
         }
+
+        // Infotext Anfang
+        long endTime = new Date().getTime();
+        System.out.println("Durchgeführte Berechnungen: "+realCalcs);
+        System.out.println("Gesamtdauer: "+(endTime-startTime)+"ms");
+        System.out.println(realCalcs/(endTime-startTime)+" Berechnungen pro ms");
+        int savedCalcs = (int)((1-(double)realCalcs/maxCals)*100);
+        System.out.println("Gesparte Berechnungen: "+(maxCals-realCalcs)+" ("+savedCalcs+"%)");
+        // Infotext Ende
     }
 }
