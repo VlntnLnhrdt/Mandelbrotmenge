@@ -23,6 +23,8 @@ public class Main  extends Application {
 
         root.getChildren().add(con.map.mapGroup);
 
+        root = con.getEvents(root);
+
         return root;
     }
 

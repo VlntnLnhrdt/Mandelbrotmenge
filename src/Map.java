@@ -21,8 +21,7 @@ public class Map {
      * 10. Durchlaufen der Rechnung so oft, wie in "Properties" unter "ITERATIONS" angegeben
      * 11. Quadrieren und Addieren der komplexen Zahl(en)
      * 12. Prüfen ob der Reale-Teil von "z" schon außerhalb der "magischen" Grenzen liegt (wird in Seminararbeit erklärt)
-     * 13. Färben des Pixels in Schwarz, falls "paint" true ist
-     * 14. Zeichnen der Achsen
+     * 13. Färben des Pixels in Schwarz, wenn es eine Achse ist, oder innerhalb der Mandelbrotmenge liegt (innerhalb der angegebenen Iterationen)
      *
      * TODO Geschwindigkeit optimieren
      */
@@ -41,7 +40,8 @@ public class Map {
     void generateMap() {
         // Infotext Anfang
         int maxCals = Properties.WINDOW_WIDTH*Properties.WINDOW_WIDTH*Properties.ITERATIONS;
-        System.out.println("Anzahl max. Berechnungen: "+maxCals);
+        if (maxCals>0)
+            System.out.println("Anzahl max. Berechnungen: "+maxCals);
         long startTime = new Date().getTime();
         int realCalcs = 0;
         // Infotext Ende
@@ -105,27 +105,27 @@ public class Map {
                 }
 
                 /* (13) */
-                if (paint) {
-                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
-                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
-                }
-
-                /* (14) */
-                if (real == Properties.WINDOW_CENTER_HOR || imag == Properties.WINDOW_CENTER_VER) {
-                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
+                if (paint || (real == Properties.WINDOW_CENTER_HOR || imag == Properties.WINDOW_CENTER_VER)) {
+                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0,0,0));
                     mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
                 }
 
             }
         }
 
+        /*  */
         // Infotext Anfang
         long endTime = new Date().getTime();
-        System.out.println("Durchgeführte Berechnungen: "+realCalcs);
-        System.out.println("Gesamtdauer: "+(endTime-startTime)+"ms");
-        System.out.println(realCalcs/(endTime-startTime)+" Berechnungen pro ms");
-        int savedCalcs = (int)((1-(double)realCalcs/maxCals)*100);
-        System.out.println("Gesparte Berechnungen: "+(maxCals-realCalcs)+" ("+savedCalcs+"%)");
+        System.out.println("Gesamtdauer: " + (endTime - startTime) + "ms");
+        if (realCalcs<maxCals) {
+            System.out.println("Durchgeführte Berechnungen: " + realCalcs);
+            System.out.println(realCalcs / (endTime - startTime) + " Berechnungen pro ms");
+            int savedCalcs = (int) ((1 - (double) realCalcs / maxCals) * 100);
+            System.out.println("Gesparte Berechnungen: " + (maxCals - realCalcs) + " (" + savedCalcs + "%)");
+        } else {
+            System.out.println("Anzahl Berechnungen außerhalb des Integer Bereichs!\nAnzeige von Informationen nicht möglich.");
+            System.out.println("Berechnung ist: "+Properties.WINDOW_WIDTH+"x"+ Properties.WINDOW_HEIGHT+"x"+Properties.ITERATIONS);
+        }
         // Infotext Ende
     }
 }
