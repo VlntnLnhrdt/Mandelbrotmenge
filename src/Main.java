@@ -39,28 +39,11 @@ public class Main  extends Application {
     @Override
     public void start(Stage primaryStage){
 
-        int tmpX, tmpY;
-
         primaryStage.setScene(new Scene(createContent()));
 
         primaryStage.setHeight(Properties.WINDOW_HEIGHT+37);
         primaryStage.setWidth(Properties.WINDOW_WIDTH+13);
         primaryStage.setTitle(Properties.WINDOW_TITLE);
-
-
-        primaryStage.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-
-            if(event.getButton() == MouseButton.PRIMARY){
-
-            }else if(event.getButton() == MouseButton.SECONDARY){
-
-            }
-
-
-        });
-        primaryStage.addEventHandler(MouseEvent.MOUSE_MOVED, event -> {
-            System.out.println(event.getX() +"  "+event.getY());
-        });
 
         primaryStage.show();
 

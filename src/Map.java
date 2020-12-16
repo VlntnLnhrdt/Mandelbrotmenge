@@ -99,25 +99,18 @@ public class Map {
 
                     /* (12) */
                     if (z.real < -2 || z.real > 0.5) {
-                        paint = true;
-
                         break;
                     }
                 }
 
                 /* (13) */
-                if (paint || (real == Properties.WINDOW_CENTER_HOR || imag == Properties.WINDOW_CENTER_VER)) {
-
-
-                    if (iterCount < 255) {
-                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
-                    } else {
-                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
-                    }
-
-
-                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
+                if (iterCount < 255) {
+                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
+                } else {
+                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
                 }
+
+                mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
 
             }
         }
