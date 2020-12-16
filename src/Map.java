@@ -21,7 +21,8 @@ public class Map {
      * 10. Durchlaufen der Rechnung so oft, wie in "Properties" unter "ITERATIONS" angegeben
      * 11. Quadrieren und Addieren der komplexen Zahl(en)
      * 12. Prüfen ob der Reale-Teil von "z" schon außerhalb der "magischen" Grenzen liegt (wird in Seminararbeit erklärt)
-     * 13. Färben des Pixels in Schwarz, wenn es eine Achse ist, oder innerhalb der Mandelbrotmenge liegt (innerhalb der angegebenen Iterationen)
+     * 13. Variable "GRADIENT" in der Klasse Properties entscheidet, dass bei "true" ein Farberlauf entsteht, bzw. bei "false" die Mandelbrotmenge nur
+     *     in schwarz-weiß dargestellt wird
      *
      * TODO Geschwindigkeit optimieren
      */
@@ -29,9 +30,20 @@ public class Map {
     Pixel[][] mapGrid; // Eine Map (multiDimensionales Array) für zukünftige Pixel wird erzeugt
     Group mapGroup;
 
+    private static int CUSTOM_ITERATIONS;
+
     /* (01) */
     Map(int mapHeight, int mapWidth) {
 
+        CUSTOM_ITERATIONS = (int)(Properties.ITERATIONS);
+        mapGrid = new Pixel[mapWidth][mapHeight]; // Festlegen der Größe
+        mapGroup = new Group();
+
+    }
+
+    Map(int mapHeight, int mapWidth, int growingIterations) {
+
+        CUSTOM_ITERATIONS = growingIterations;
         mapGrid = new Pixel[mapWidth][mapHeight]; // Festlegen der Größe
         mapGroup = new Group();
 
@@ -39,9 +51,9 @@ public class Map {
 
     void generateMap() {
         // Infotext Anfang
-        int maxCals = Properties.WINDOW_WIDTH*Properties.WINDOW_WIDTH*Properties.ITERATIONS;
-        if (maxCals>0)
-            System.out.println("Anzahl max. Berechnungen: "+maxCals);
+        long maxCals = Properties.WINDOW_WIDTH*Properties.WINDOW_WIDTH*CUSTOM_ITERATIONS;
+        System.out.println("Anzahl max. Berechnungen: "+maxCals);
+
         long startTime = new Date().getTime();
         int realCalcs = 0;
         // Infotext Ende
@@ -87,6 +99,7 @@ public class Map {
                 z.setRealImag(0, 0);
 
 
+                Color clr = Color.rgb(0,0,0);
 
                 /* (10) */
                 for (int iter = 0; iter < Properties.ITERATIONS; iter++) {
@@ -99,17 +112,22 @@ public class Map {
 
                     /* (12) */
                     if (z.real < -2 || z.real > 0.5) {
+                        clr = Color.rgb(255,255,255);
                         break;
                     }
                 }
 
                 /* (13) */
-                if (iterCount < 255) {
-                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
+                if (Properties.GRADIENT) {
+                    if (iterCount < 255) {
+                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
+                    } else {
+                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
+                    }
                 } else {
-                    mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
-                }
+                    mapGrid[real][imag] = new Pixel(real, imag, clr);
 
+                }
                 mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
 
             }
@@ -119,15 +137,10 @@ public class Map {
         // Infotext Anfang
         long endTime = new Date().getTime();
         System.out.println("Gesamtdauer: " + (endTime - startTime) + "ms");
-        if (realCalcs<maxCals) {
             System.out.println("Durchgeführte Berechnungen: " + realCalcs);
             System.out.println(realCalcs / (endTime - startTime) + " Berechnungen pro ms");
-            int savedCalcs = (int) ((1 - (double) realCalcs / maxCals) * 100);
+            long savedCalcs = (long) ((1 - (double) realCalcs / maxCals) * 100);
             System.out.println("Gesparte Berechnungen: " + (maxCals - realCalcs) + " (" + savedCalcs + "%)");
-        } else {
-            System.out.println("Anzahl Berechnungen außerhalb des Integer Bereichs!\nAnzeige von Informationen nicht möglich.");
-            System.out.println("Berechnung ist: "+Properties.WINDOW_WIDTH+"x"+ Properties.WINDOW_HEIGHT+"x"+Properties.ITERATIONS);
-        }
         // Infotext Ende
     }
 }
