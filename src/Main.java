@@ -1,8 +1,14 @@
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 public class Main  extends Application {
@@ -14,12 +20,18 @@ public class Main  extends Application {
      *
      * */
     Pane root;
+    Controller con;
+
+
+    int growingIteration = 0;
+    Timer t;
+    boolean iterationGrowing = false;
 
     // Statische Mandelbrotmenge
     private Parent createContent(){
 
         root = new Pane();
-        Controller con = new Controller();
+        con = new Controller();
 
         con.makeMap();
         root.getChildren().add(con.map.mapGroup);
@@ -36,8 +48,45 @@ public class Main  extends Application {
         primaryStage.setWidth(Properties.WINDOW_WIDTH+13);
         primaryStage.setTitle(Properties.WINDOW_TITLE);
 
+        /* XX */ // Schließen des Fensters
+        primaryStage.setOnCloseRequest(event -> {
+            System.out.println("\n------------------------------------------------\n| Calculations stopped, Window is now closing! |\n------------------------------------------------");
+            System.exit(0);
+        });
+
+        /* XX */ // Wenn eine Taste gedrückt wird
+        primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            if (e.getCode() == KeyCode.ENTER) { // Bei Enter wird das Folgende ausgeführt
+                if (!iterationGrowing) {
+                    TimerTask tt = new TimerTask() {
+                        @Override
+                        public void run() {
+                            /* XX */
+                            growingIteration = (growingIteration < 30) ? growingIteration + 1 : growingIteration * 2;
+                            Properties.ITERATIONS = growingIteration;
+
+                            System.out.println("Generating Map with " + growingIteration + " Iterations ...");
+
+                            con.map.generateMap();
+
+                        }
+                    };
+
+                    /* XX */
+                    t = new Timer();
+                    t.schedule(tt, 0, 1000);
+                } else {
+                    t.cancel();
+                }
+
+                iterationGrowing = !iterationGrowing;
+            }
+        });
+
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();
+
+
 
 
 

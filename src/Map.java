@@ -1,7 +1,6 @@
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
-
-import java.util.Date;
+import javafx.scene.shape.Rectangle;
 
 public class Map {
 
@@ -22,9 +21,7 @@ public class Map {
      * 11. Quadrieren und Addieren der komplexen Zahl(en)
      * 12. Prüfen ob der Reale-Teil von "z" schon außerhalb der "magischen" Grenzen liegt (wird in Seminararbeit erklärt)
      * 13. Variable "GRADIENT" in der Klasse Properties entscheidet, dass bei "true" ein Farberlauf entsteht, bzw. bei "false" die Mandelbrotmenge nur
-     *     in schwarz-weiß dargestellt wird
-     *
-     * TODO Geschwindigkeit optimieren
+     * in schwarz-weiß dargestellt wird
      */
 
     Pixel[][] mapGrid; // Eine Map (multiDimensionales Array) für zukünftige Pixel wird erzeugt
@@ -35,7 +32,7 @@ public class Map {
     /* (01) */
     Map(int mapHeight, int mapWidth) {
 
-        CUSTOM_ITERATIONS = (int)(Properties.ITERATIONS);
+        CUSTOM_ITERATIONS = (int) (Properties.ITERATIONS);
         mapGrid = new Pixel[mapWidth][mapHeight]; // Festlegen der Größe
         mapGroup = new Group();
 
@@ -50,14 +47,6 @@ public class Map {
     }
 
     void generateMap() {
-        // Infotext Anfang
-        long maxCals = Properties.WINDOW_WIDTH*Properties.WINDOW_WIDTH*CUSTOM_ITERATIONS;
-        System.out.println("Anzahl max. Berechnungen: "+maxCals);
-
-        long startTime = new Date().getTime();
-        int realCalcs = 0;
-        // Infotext Ende
-
         // Hinzufügen der einzelnen Pixel zur Oberfläche
 
         /* (02) */
@@ -73,19 +62,15 @@ public class Map {
         /* (04) */
         ComplexNumber z = new ComplexNumber();
 
-        /* (05) */
-        boolean paint;
-
         int iterCount = 0;
 
         /* (06) */
         for (int real = 0; real < mapGrid.length; real++) {
             /* (06) */
             for (int imag = 0; imag < mapGrid[real].length; imag++) {
-                paint = true;
 
                 /* (07) */
-                realCords = real - Properties.WINDOW_CENTER_HOR;
+                realCords = real - Properties.WINDOW_CENTER_HOR ;
                 /* (08) */
                 realMath = realCords * scale;
 
@@ -99,11 +84,10 @@ public class Map {
                 z.setRealImag(0, 0);
 
 
-                Color clr = Color.rgb(0,0,0);
+                Color clr = Color.rgb(0, 0, 0);
 
                 /* (10) */
                 for (int iter = 0; iter < Properties.ITERATIONS; iter++) {
-                    realCalcs++;
                     /* (11) */
                     z.square();
                     z.adding(c);
@@ -112,35 +96,32 @@ public class Map {
 
                     /* (12) */
                     if (z.real < -2 || z.real > 0.5) {
-                        clr = Color.rgb(255,255,255);
+                        clr = Color.rgb(255, 255, 255);
                         break;
                     }
                 }
 
-                /* (13) */
-                if (Properties.GRADIENT) {
-                    if (iterCount < 255) {
-                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
+                if (mapGrid[real][imag]==null) { // Wenn die Map leer ist, werden neue Pixel erstellt
+                    /* (13) */
+                    if (Properties.GRADIENT) {
+                        if (iterCount < 255) {
+                            mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
+                        } else {
+                            mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
+                        }
                     } else {
-                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
-                    }
-                } else {
-                    mapGrid[real][imag] = new Pixel(real, imag, clr);
+                        mapGrid[real][imag] = new Pixel(real, imag, clr);
 
+                    }
+                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
+                } else { // Wenn bereits etwas in Map drin ist, wird nur die Farbe geändert (Leistungsersparnis)
+                    // Hier schwarz weiß, da man mehr sehen will
+                    ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(clr);
                 }
-                mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
+
+                clr = Color.rgb(0, 0, 0);
 
             }
         }
-
-        /*  */
-        // Infotext Anfang
-        long endTime = new Date().getTime();
-        System.out.println("Gesamtdauer: " + (endTime - startTime) + "ms");
-            System.out.println("Durchgeführte Berechnungen: " + realCalcs);
-            System.out.println(realCalcs / (endTime - startTime) + " Berechnungen pro ms");
-            long savedCalcs = (long) ((1 - (double) realCalcs / maxCals) * 100);
-            System.out.println("Gesparte Berechnungen: " + (maxCals - realCalcs) + " (" + savedCalcs + "%)");
-        // Infotext Ende
     }
 }
