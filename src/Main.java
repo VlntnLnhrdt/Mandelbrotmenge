@@ -81,7 +81,25 @@ public class Main  extends Application {
 
                 iterationGrowing = !iterationGrowing;
             }
+
+            /* XX */
+            if (e.getCode() == KeyCode.UP && !iterationGrowing) { // Wenn Pfeiltaste + Iteration wächst aktuell nicht
+                Properties.ITERATIONS = ++growingIteration;
+
+                System.out.println("Generating Map with " + growingIteration + " Iterations ...");
+
+                con.map.generateMap();
+            }
+
+            if (e.getCode() == KeyCode.DOWN && !iterationGrowing && growingIteration>1) { // Wenn Pfeiltaste + Iteration wächst aktuell nicht
+                Properties.ITERATIONS = --growingIteration;
+
+                System.out.println("Generating Map with " + growingIteration + " Iterations ...");
+
+                con.map.generateMap();
+            }
         });
+
 
         primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();
