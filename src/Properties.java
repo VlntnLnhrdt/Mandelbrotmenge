@@ -8,8 +8,8 @@ public class Properties {
 
     final public static String WINDOW_TITLE = "Linhardt, Valentin 2020 - Seminararbeit: Die Mandelbrotmenge als mathematisches und künstlerisches Objekt";
 
-    final public static int WINDOW_HEIGHT = 1000;
-    final public static int WINDOW_WIDTH = 1000;
+    final public static int WINDOW_HEIGHT = 1000; // !! Nicht verändern !!
+    final public static int WINDOW_WIDTH = WINDOW_HEIGHT;
     public static int WINDOW_CENTER_HOR = (WINDOW_WIDTH/5)*4; // Mehr Punkte in negativer Richtigung der reelen Zahlen
     public static int WINDOW_CENTER_VER = WINDOW_HEIGHT/2;    // Genau mittig (imaginäre Zahlen ausgeglichen)
 
@@ -20,6 +20,9 @@ public class Properties {
 
 
     final public static boolean GRADIENT = true; // Farbige Darstellung
+
+    final public static int ZOOM_FACTOR = 2;
+    public static int ZOOM_LIVE = 1;
 
 
 }

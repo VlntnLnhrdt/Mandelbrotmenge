@@ -1,6 +1,10 @@
 public class Controller {
 
-    // Vorrausgedanke für Zooming-Logik
+    /**
+     *
+     * Erzeugt die Map, dient zur besseren Übersicht und für mehr Flexibilität
+     *
+     */
 
 
     Map map;

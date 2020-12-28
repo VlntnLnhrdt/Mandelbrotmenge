@@ -26,21 +26,11 @@ public class Map {
 
     Pixel[][] mapGrid; // Eine Map (multiDimensionales Array) für zukünftige Pixel wird erzeugt
     Group mapGroup;
-
-    private static int CUSTOM_ITERATIONS;
+    boolean zoomed = false; // Wenn gezoomt ist werden Tasten ignoriert (growingIteration)
 
     /* (01) */
     Map(int mapHeight, int mapWidth) {
 
-        CUSTOM_ITERATIONS = (int) (Properties.ITERATIONS);
-        mapGrid = new Pixel[mapWidth][mapHeight]; // Festlegen der Größe
-        mapGroup = new Group();
-
-    }
-
-    Map(int mapHeight, int mapWidth, int growingIterations) {
-
-        CUSTOM_ITERATIONS = growingIterations;
         mapGrid = new Pixel[mapWidth][mapHeight]; // Festlegen der Größe
         mapGroup = new Group();
 
@@ -120,6 +110,91 @@ public class Map {
                 }
 
                 clr = Color.rgb(0, 0, 0);
+
+            }
+        }
+    }
+
+    double oldZoomPointX = 0;
+    double oldZoomPointY = 0;
+
+    void generateZoomMap(double xClick, double yClick) {
+        zoomed = true;
+        oldZoomPointX+=xClick;
+        oldZoomPointY+=yClick;
+
+        // Hinzufügen der einzelnen Pixel zur Oberfläche
+
+        /* (02) */
+        Properties.ZOOM_LIVE *= Properties.ZOOM_FACTOR;
+        double scale = (Properties.REAL_LENGTH / Properties.WINDOW_WIDTH);
+
+        double realCords;
+        double realMath;
+        double imagCords;
+        double imagMath;
+
+        /* (03) */
+        final ComplexNumber c = new ComplexNumber();
+        /* (04) */
+        ComplexNumber z = new ComplexNumber();
+
+        int iterCount = 0;
+
+        double realMoveCords = xClick - Properties.WINDOW_WIDTH;
+
+        double imagMove = 0;
+
+        System.out.println("Start: "+realMoveCords+" "+imagMove+"i");
+
+        /* (06) */
+        for (int real = 0; real < mapGrid.length; real++) {
+            /* (06) */
+            for (int imag = 0; imag < mapGrid[real].length; imag++) {
+
+                /* (07) */
+                realCords = real - (Properties.WINDOW_WIDTH/2 - xClick);
+                /* (08) */
+                realMath = realCords * scale;
+
+                /* (07) */
+                imagCords = imag - Properties.WINDOW_HEIGHT/2;
+                /* (08) */
+                imagMath = imagCords * scale;
+
+                /* (09) */
+                c.setRealImag(realMath, imagMath);
+                z.setRealImag(0, 0);
+
+                /* (10) */
+                for (int iter = 0; iter < Properties.ITERATIONS; iter++) {
+                    /* (11) */
+                    z.square();
+                    z.adding(c);
+
+                    iterCount = iter;
+
+                    /* (12) */
+                    if (z.real < -2 || z.real > 0.5) {
+                        break;
+                    }
+                }
+
+                if (mapGrid[real][imag]==null) { // Wenn die Map leer ist, werden neue Pixel erstellt
+                    /* (13) */
+                    if (iterCount < 255) {
+                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
+                    } else {
+                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
+                    }
+                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
+                } else { // Wenn bereits etwas in Map drin ist, wird nur die Farbe geändert (Leistungsersparnis)
+                    if (iterCount < 255) {
+                        ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(Color.rgb(0, iterCount / 2, iterCount));
+                    } else {
+                        ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(Color.rgb(0, 0,0));
+                    }
+                }
 
             }
         }

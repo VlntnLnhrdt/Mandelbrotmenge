@@ -1,9 +1,11 @@
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -13,12 +15,12 @@ import java.util.TimerTask;
 
 public class Main  extends Application {
 
-
     /**
      *
      * Nur zur genrellen Darstellung eines Fensters und Starten des Programmes
      *
      * */
+
     Pane root;
     Controller con;
 
@@ -54,32 +56,46 @@ public class Main  extends Application {
             System.exit(0);
         });
 
+
+
+
+        primaryStage.setScene(new Scene(createContent()));
+
+        root.setOnMouseClicked(mouseEvent -> {
+            System.out.println(mouseEvent.getX());
+            System.out.println(mouseEvent.getY());
+            System.out.println(mouseEvent.getButton()); // PRIMARY(links) - SECONDARY(rechts)
+            con.map.generateZoomMap(mouseEvent.getX(), mouseEvent.getY());
+        });
+
         /* XX */ // Wenn eine Taste gedrückt wird
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             if (e.getCode() == KeyCode.ENTER) { // Bei Enter wird das Folgende ausgeführt
-                if (!iterationGrowing) {
-                    TimerTask tt = new TimerTask() {
-                        @Override
-                        public void run() {
-                            /* XX */
-                            growingIteration = (growingIteration < 30) ? growingIteration + 1 : growingIteration * 2;
-                            Properties.ITERATIONS = growingIteration;
+                if (!con.map.zoomed) { // Wenn gezoomt ist werden Tasten ignoriert (growingIteration)
+                    if (!iterationGrowing) {
+                        TimerTask tt = new TimerTask() {
+                            @Override
+                            public void run() {
+                                /* XX */
+                                growingIteration = (growingIteration < 30) ? growingIteration + 1 : growingIteration * 2;
+                                Properties.ITERATIONS = growingIteration;
 
-                            System.out.println("Generating Map with " + growingIteration + " Iterations ...");
+                                System.out.println("Generating Map with " + growingIteration + " Iterations ...");
 
-                            con.map.generateMap();
+                                con.map.generateMap();
 
-                        }
-                    };
+                            }
+                        };
 
-                    /* XX */
-                    t = new Timer();
-                    t.schedule(tt, 0, 1000);
-                } else {
-                    t.cancel();
+                        /* XX */
+                        t = new Timer();
+                        t.schedule(tt, 0, 1000);
+                    } else {
+                        t.cancel();
+                    }
+
+                    iterationGrowing = !iterationGrowing;
                 }
-
-                iterationGrowing = !iterationGrowing;
             }
 
             /* XX */
@@ -100,8 +116,6 @@ public class Main  extends Application {
             }
         });
 
-
-        primaryStage.setScene(new Scene(createContent()));
         primaryStage.show();
 
 
