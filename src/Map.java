@@ -2,6 +2,8 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
+import java.util.Arrays;
+
 public class Map {
 
     /**
@@ -27,9 +29,16 @@ public class Map {
     Pixel[][] mapGrid; // Eine Map (multiDimensionales Array) für zukünftige Pixel wird erzeugt
     Group mapGroup;
     boolean zoomed = false; // Wenn gezoomt ist werden Tasten ignoriert (growingIteration)
+    boolean firstZoom = true; // Beim ersten Klicken werden die Koordinatenachsen angezeigt
+    int mapHeight, mapWidth;
+
+    int realStart = 0;
+    int imagStart = 0;
 
     /* (01) */
     Map(int mapHeight, int mapWidth) {
+        this.mapHeight = mapHeight;
+        this.mapWidth = mapWidth;
 
         mapGrid = new Pixel[mapWidth][mapHeight]; // Festlegen der Größe
         mapGroup = new Group();
@@ -38,9 +47,6 @@ public class Map {
 
     void generateMap() {
         // Hinzufügen der einzelnen Pixel zur Oberfläche
-
-        /* (02) */
-        double scale = Properties.REAL_LENGTH / Properties.WINDOW_WIDTH;
 
         double realCords;
         double realMath;
@@ -60,14 +66,14 @@ public class Map {
             for (int imag = 0; imag < mapGrid[real].length; imag++) {
 
                 /* (07) */
-                realCords = real - Properties.WINDOW_CENTER_HOR ;
+                realCords = real - Properties.WINDOW_CENTER_HOR +realStart;
                 /* (08) */
-                realMath = realCords * scale;
+                realMath = realCords * Properties.SCALE;
 
                 /* (07) */
-                imagCords = imag - Properties.WINDOW_CENTER_VER;
+                imagCords = Properties.WINDOW_CENTER_VER - imag - imagStart;
                 /* (08) */
-                imagMath = imagCords * scale;
+                imagMath = imagCords * Properties.SCALE;
 
                 /* (09) */
                 c.setRealImag(realMath, imagMath);
@@ -104,99 +110,46 @@ public class Map {
 
                     }
                     mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
+                } else if (zoomed){
+                    if (iterCount < 255) {
+                        ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(Color.rgb(0, iterCount / 2, iterCount));
+                    } else {
+                        ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(Color.rgb(0,0,0));
+                    }
+
+                    if (firstZoom && (real == Properties.WINDOW_WIDTH/2 || imag == Properties.WINDOW_HEIGHT/2)) {
+                        ((Rectangle) mapGrid[real][imag].getRectangle()).setFill(Color.rgb(255, 255, 255));
+                    }
                 } else { // Wenn bereits etwas in Map drin ist, wird nur die Farbe geändert (Leistungsersparnis)
                     // Hier schwarz weiß, da man mehr sehen will
                     ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(clr);
                 }
 
-                clr = Color.rgb(0, 0, 0);
-
             }
         }
+
+        System.out.println("Speichergröße: " +mapGroup.getChildren().size());
     }
 
-    double oldZoomPointX = 0;
-    double oldZoomPointY = 0;
+    void generateMap(int xClick, int yClick) {
 
-    void generateZoomMap(double xClick, double yClick) {
-        zoomed = true;
-        oldZoomPointX+=xClick;
-        oldZoomPointY+=yClick;
+        if (!zoomed) {
+            zoomed = true;
 
-        // Hinzufügen der einzelnen Pixel zur Oberfläche
+            // Versetzen der Mandelbrotmenge in die Mitte
+            Properties.WINDOW_CENTER_HOR = Properties.WINDOW_WIDTH/2;
+            Properties.WINDOW_CENTER_VER = Properties.WINDOW_HEIGHT/2;
 
-        /* (02) */
-        Properties.ZOOM_LIVE *= Properties.ZOOM_FACTOR;
-        double scale = (Properties.REAL_LENGTH / Properties.WINDOW_WIDTH);
+            // Scaleanpassung
+            Properties.REAL_LENGTH = 4;
+            Properties.SCALE = Properties.REAL_LENGTH / Properties.WINDOW_WIDTH;
 
-        double realCords;
-        double realMath;
-        double imagCords;
-        double imagMath;
+            generateMap();
 
-        /* (03) */
-        final ComplexNumber c = new ComplexNumber();
-        /* (04) */
-        ComplexNumber z = new ComplexNumber();
-
-        int iterCount = 0;
-
-        double realMoveCords = xClick - Properties.WINDOW_WIDTH;
-
-        double imagMove = 0;
-
-        System.out.println("Start: "+realMoveCords+" "+imagMove+"i");
-
-        /* (06) */
-        for (int real = 0; real < mapGrid.length; real++) {
-            /* (06) */
-            for (int imag = 0; imag < mapGrid[real].length; imag++) {
-
-                /* (07) */
-                realCords = real - (Properties.WINDOW_WIDTH/2 - xClick);
-                /* (08) */
-                realMath = realCords * scale;
-
-                /* (07) */
-                imagCords = imag - Properties.WINDOW_HEIGHT/2;
-                /* (08) */
-                imagMath = imagCords * scale;
-
-                /* (09) */
-                c.setRealImag(realMath, imagMath);
-                z.setRealImag(0, 0);
-
-                /* (10) */
-                for (int iter = 0; iter < Properties.ITERATIONS; iter++) {
-                    /* (11) */
-                    z.square();
-                    z.adding(c);
-
-                    iterCount = iter;
-
-                    /* (12) */
-                    if (z.real < -2 || z.real > 0.5) {
-                        break;
-                    }
-                }
-
-                if (mapGrid[real][imag]==null) { // Wenn die Map leer ist, werden neue Pixel erstellt
-                    /* (13) */
-                    if (iterCount < 255) {
-                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
-                    } else {
-                        mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
-                    }
-                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
-                } else { // Wenn bereits etwas in Map drin ist, wird nur die Farbe geändert (Leistungsersparnis)
-                    if (iterCount < 255) {
-                        ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(Color.rgb(0, iterCount / 2, iterCount));
-                    } else {
-                        ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(Color.rgb(0, 0,0));
-                    }
-                }
-
-            }
+            firstZoom = false;
+        } else {
+            System.out.println("Ende");
         }
+
     }
 }

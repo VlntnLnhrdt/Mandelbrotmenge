@@ -38,8 +38,6 @@ public class Main  extends Application {
         con.makeMap();
         root.getChildren().add(con.map.mapGroup);
 
-        //root = con.getEvents(root);
-
         return root;
     }
 
@@ -61,15 +59,15 @@ public class Main  extends Application {
 
         primaryStage.setScene(new Scene(createContent()));
 
+        /* XX */ // baldiger Zoom
         root.setOnMouseClicked(mouseEvent -> {
-            System.out.println(mouseEvent.getX());
-            System.out.println(mouseEvent.getY());
-            System.out.println(mouseEvent.getButton()); // PRIMARY(links) - SECONDARY(rechts)
-            con.map.generateZoomMap(mouseEvent.getX(), mouseEvent.getY());
+            System.out.println("Angeklickter Pixel: "+mouseEvent.getX()+"|"+mouseEvent.getY());
+            con.map.generateMap((int)mouseEvent.getX(), (int)mouseEvent.getY());
         });
 
         /* XX */ // Wenn eine Taste gedrückt wird
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
+            System.out.println("Taste: "+e.getCode().toString());
             if (e.getCode() == KeyCode.ENTER) { // Bei Enter wird das Folgende ausgeführt
                 if (!con.map.zoomed) { // Wenn gezoomt ist werden Tasten ignoriert (growingIteration)
                     if (!iterationGrowing) {
@@ -100,7 +98,7 @@ public class Main  extends Application {
 
             /* XX */
             if (e.getCode() == KeyCode.UP && !iterationGrowing) { // Wenn Pfeiltaste + Iteration wächst aktuell nicht
-                Properties.ITERATIONS = ++growingIteration;
+                Properties.ITERATIONS = growingIteration = (growingIteration < 30) ? growingIteration + 1 : growingIteration * 2;
 
                 System.out.println("Generating Map with " + growingIteration + " Iterations ...");
 
@@ -108,7 +106,7 @@ public class Main  extends Application {
             }
 
             if (e.getCode() == KeyCode.DOWN && !iterationGrowing && growingIteration>1) { // Wenn Pfeiltaste + Iteration wächst aktuell nicht
-                Properties.ITERATIONS = --growingIteration;
+                Properties.ITERATIONS = growingIteration = (growingIteration <= 30) ? growingIteration - 1 : growingIteration / 2;;
 
                 System.out.println("Generating Map with " + growingIteration + " Iterations ...");
 

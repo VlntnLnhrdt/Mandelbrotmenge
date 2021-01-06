@@ -9,6 +9,7 @@ public class ComplexNumber {
     double real, realTemp;
     double imag;
 
+
     public void setRealImag(double real, double imag) {
         this.real = real;
         this.imag = imag;
@@ -17,6 +18,7 @@ public class ComplexNumber {
 
     /**
      *
+     * z = z² + c
      * (1+1i)*(1+1i) = 1² + 1i + 1i + 1i²
      * (a+bi)*(c+di)  = a*c + a*di + bi*c + bi*di    mit i²=-1
      *            -> = a*c -b*d +a*di + bi*c
