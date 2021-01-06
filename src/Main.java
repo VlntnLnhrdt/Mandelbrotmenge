@@ -50,7 +50,7 @@ public class Main  extends Application {
 
         /* XX */ // Schließen des Fensters
         primaryStage.setOnCloseRequest(event -> {
-            System.out.println("\n------------------------------------------------\n| Calculations stopped, Window is now closing! |\n------------------------------------------------");
+            System.out.println("\n------------------------------------------------------\n| Berechnungen abgebrochen, Fenster wird geschlossen |\n------------------------------------------------------");
             System.exit(0);
         });
 
@@ -62,14 +62,16 @@ public class Main  extends Application {
         /* XX */ // baldiger Zoom
         root.setOnMouseClicked(mouseEvent -> {
             System.out.println("Angeklickter Pixel: "+mouseEvent.getX()+"|"+mouseEvent.getY());
-            con.map.generateMap((int)mouseEvent.getX(), (int)mouseEvent.getY());
+            if (!con.map.growing)
+                con.map.generateMap((int)mouseEvent.getX(), (int)mouseEvent.getY());
         });
 
         /* XX */ // Wenn eine Taste gedrückt wird
         primaryStage.addEventHandler(KeyEvent.KEY_PRESSED, e -> {
             System.out.println("Taste: "+e.getCode().toString());
             if (e.getCode() == KeyCode.ENTER) { // Bei Enter wird das Folgende ausgeführt
-                if (!con.map.zoomed) { // Wenn gezoomt ist werden Tasten ignoriert (growingIteration)
+                con.map.growing = true;
+                if (!con.map.zoomed) { // Wenn gezoomt ist werden Tasten ignoriert
                     if (!iterationGrowing) {
                         TimerTask tt = new TimerTask() {
                             @Override

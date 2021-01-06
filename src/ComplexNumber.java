@@ -1,3 +1,6 @@
+import javafx.scene.Node;
+import javafx.scene.paint.Color;
+
 public class ComplexNumber {
 
     /**
@@ -6,15 +9,33 @@ public class ComplexNumber {
      *
      */
 
+    Pixel pixel;
     double real, realTemp;
     double imag;
 
-
-    public void setRealImag(double real, double imag) {
+    ComplexNumber(double real, double imag, int x, int y) {
+        pixel = new Pixel(x,y);
         this.real = real;
         this.imag = imag;
     }
 
+    public void upadateContent(double real, double imag, Color color) {
+        this.real = real;
+        this.imag = imag;
+        pixel.setColor(color);
+    }
+
+    public void setColor(Color color) {
+        pixel.setColor(color);
+    }
+
+    public double getReal() {
+        return real;
+    }
+
+    public Node getRectangle() {
+        return pixel.getRectangle();
+    }
 
     /**
      *
@@ -36,13 +57,8 @@ public class ComplexNumber {
     }
 
     // Addiert eine weitere komplexe Zahl zu dieser Zahl
-    public void adding(ComplexNumber c) {
-        real += c.real;
-        imag += c.imag;
-    }
-
-    // Gibt die komplexe Zahl aus (meist nur für Testzwecke)
-    public void print(){
-        System.out.println("Real: "+real+"\nImag: "+imag+"i");
+    public void adding(double real, double imag) {
+        this.real += real;
+        this.imag += imag;
     }
 }

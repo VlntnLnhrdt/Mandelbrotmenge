@@ -12,8 +12,11 @@ public class Pixel {
 
     private final Node rectangle;
 
-    Pixel(int x, int y, Color color) {
+    Pixel(int x, int y) {
         rectangle = new Rectangle(x, y, 1, 1); // Node mit den Eigenschaften eines Rectangles wird erstellt
+    }
+
+    public void setColor(Color color) {
         ((Rectangle)rectangle).setFill(color); // Farbgebung
     }
 

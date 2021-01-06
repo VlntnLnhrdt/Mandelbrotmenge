@@ -1,3 +1,4 @@
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -26,104 +27,65 @@ public class Map {
      * in schwarz-weiß dargestellt wird
      */
 
-    Pixel[][] mapGrid; // Eine Map (multiDimensionales Array) für zukünftige Pixel wird erzeugt
+    ComplexNumber[][] mapGrid; // Eine Map (multiDimensionales Array) für zukünftige Pixel wird erzeugt
     Group mapGroup;
-    boolean zoomed = false; // Wenn gezoomt ist werden Tasten ignoriert (growingIteration)
+    boolean zoomed = false; // Wenn gezoomt ist werden Tasten ignoriert
+    boolean growing = false; // Wenn sie entsteht, wird die Maus ignoriert
     boolean firstZoom = true; // Beim ersten Klicken werden die Koordinatenachsen angezeigt
     int mapHeight, mapWidth;
-
-    int realStart = 0;
-    int imagStart = 0;
 
     /* (01) */
     Map(int mapHeight, int mapWidth) {
         this.mapHeight = mapHeight;
         this.mapWidth = mapWidth;
 
-        mapGrid = new Pixel[mapWidth][mapHeight]; // Festlegen der Größe
+        mapGrid = new ComplexNumber[mapWidth][mapHeight]; // Festlegen der Größe
         mapGroup = new Group();
-
     }
 
+
     void generateMap() {
-        // Hinzufügen der einzelnen Pixel zur Oberfläche
 
-        double realCords;
-        double realMath;
-        double imagCords;
-        double imagMath;
+        ComplexNumber z;
+        double realMath, imagMath;
+        int iterations = 0;
 
-        /* (03) */
-        final ComplexNumber c = new ComplexNumber();
-        /* (04) */
-        ComplexNumber z = new ComplexNumber();
-
-        int iterCount = 0;
-
-        /* (06) */
         for (int real = 0; real < mapGrid.length; real++) {
             /* (06) */
             for (int imag = 0; imag < mapGrid[real].length; imag++) {
 
-                /* (07) */
-                realCords = real - Properties.WINDOW_CENTER_HOR +realStart;
-                /* (08) */
-                realMath = realCords * Properties.SCALE;
+                realMath = (real - Properties.WINDOW_CENTER_HOR) * Properties.SCALE;
+                imagMath = (Properties.WINDOW_CENTER_VER - imag) * Properties.SCALE;
 
-                /* (07) */
-                imagCords = Properties.WINDOW_CENTER_VER - imag - imagStart;
-                /* (08) */
-                imagMath = imagCords * Properties.SCALE;
+                z = new ComplexNumber(realMath,imagMath,real,imag);
 
-                /* (09) */
-                c.setRealImag(realMath, imagMath);
-                z.setRealImag(0, 0);
-
-
-                Color clr = Color.rgb(0, 0, 0);
-
-                /* (10) */
-                for (int iter = 0; iter < Properties.ITERATIONS; iter++) {
-                    /* (11) */
+                for (int i = 0; i<Properties.ITERATIONS;i++) {
                     z.square();
-                    z.adding(c);
+                    z.adding(realMath, imagMath);
 
-                    iterCount = iter;
+                    iterations = i;
 
-                    /* (12) */
-                    if (z.real < -2 || z.real > 0.5) {
-                        clr = Color.rgb(255, 255, 255);
+                    if (z.getReal()<-2 || z.getReal()>0.5)
                         break;
-                    }
+
                 }
 
-                if (mapGrid[real][imag]==null) { // Wenn die Map leer ist, werden neue Pixel erstellt
-                    /* (13) */
-                    if (Properties.GRADIENT) {
-                        if (iterCount < 255) {
-                            mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, iterCount / 2, iterCount));
-                        } else {
-                            mapGrid[real][imag] = new Pixel(real, imag, Color.rgb(0, 0, 0));
-                        }
-                    } else {
-                        mapGrid[real][imag] = new Pixel(real, imag, clr);
+                // FIXME Entstehung fehlt
 
-                    }
-                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
-                } else if (zoomed){
-                    if (iterCount < 255) {
-                        ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(Color.rgb(0, iterCount / 2, iterCount));
-                    } else {
-                        ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(Color.rgb(0,0,0));
-                    }
+                if (mapGrid[real][imag]==null) {
+                    mapGrid[real][imag] = new ComplexNumber(realMath, imagMath, real, imag);
 
-                    if (firstZoom && (real == Properties.WINDOW_WIDTH/2 || imag == Properties.WINDOW_HEIGHT/2)) {
-                        ((Rectangle) mapGrid[real][imag].getRectangle()).setFill(Color.rgb(255, 255, 255));
-                    }
-                } else { // Wenn bereits etwas in Map drin ist, wird nur die Farbe geändert (Leistungsersparnis)
-                    // Hier schwarz weiß, da man mehr sehen will
-                    ((Rectangle)mapGrid[real][imag].getRectangle()).setFill(clr);
+                    mapGrid[real][imag].setColor(Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
+
+
+                    mapGroup.getChildren().add(mapGrid[real][imag].pixel.getRectangle());
+                } else {
+
+                    mapGrid[real][imag].upadateContent(realMath, imagMath, Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
                 }
+
+                if (zoomed && (real==Properties.WINDOW_CENTER_HOR || imag==Properties.WINDOW_CENTER_VER))
+                    mapGrid[real][imag].setColor(Color.WHITE);
 
             }
         }
@@ -133,12 +95,14 @@ public class Map {
 
     void generateMap(int xClick, int yClick) {
 
-        if (!zoomed) {
+        if (!zoomed) {// Mandelbrotmenge wird in die Mitte verschoben
+            System.out.println("Mittelung der Mandelbrotmenge mit Koordinatenachsen");
+            System.out.println(mapGrid[xClick][yClick].real+" "+mapGrid[xClick][yClick].imag+"i");
             zoomed = true;
 
             // Versetzen der Mandelbrotmenge in die Mitte
-            Properties.WINDOW_CENTER_HOR = Properties.WINDOW_WIDTH/2;
-            Properties.WINDOW_CENTER_VER = Properties.WINDOW_HEIGHT/2;
+            Properties.WINDOW_CENTER_HOR = Properties.WINDOW_WIDTH / 2;
+            Properties.WINDOW_CENTER_VER = Properties.WINDOW_HEIGHT / 2;
 
             // Scaleanpassung
             Properties.REAL_LENGTH = 4;
@@ -147,9 +111,45 @@ public class Map {
             generateMap();
 
             firstZoom = false;
-        } else {
-            System.out.println("Ende");
-        }
+        } else {// Zoom
 
+            // Links Oben beginnt die Darstellung mit dieser komplexen Zahl
+            ComplexNumber startingNumber = mapGrid[xClick][yClick];
+
+            ComplexNumber z;
+
+            System.out.println(startingNumber.real+" "+startingNumber.imag+"i");
+
+            Properties.SCALE /= 2;
+
+            double realMath, imagMath;
+            int iterations = 0;
+
+
+            for (int real = 0; real < mapGrid.length; real++) {
+
+                for (int imag = 0; imag < mapGrid[real].length; imag++) {
+
+                    realMath = startingNumber.real + real*Properties.SCALE;
+                    imagMath = startingNumber.imag - imag*Properties.SCALE;
+
+                    z = new ComplexNumber(realMath,imagMath, real, imag);
+
+                    for (int i = 0; i<Properties.ITERATIONS;i++) {
+                        z.square();
+                        z.adding(realMath, imagMath);
+
+                        iterations = i;
+
+                        if (z.getReal()<-2 || z.getReal()>0.5)
+                            break;
+                    }
+
+                    mapGrid[real][imag].upadateContent(realMath, imagMath, Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
+
+                }
+            }
+
+        }
     }
 }

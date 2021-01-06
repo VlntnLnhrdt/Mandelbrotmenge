@@ -14,14 +14,9 @@ public class Properties {
     public static int WINDOW_CENTER_VER = WINDOW_HEIGHT/2;    // Genau mittig (imaginäre Zahlen ausgeglichen)
 
 
-    public static long ITERATIONS = 256; // Anzahl der zu durchlaufenen Iterationen (je mehr desto "schärfer")
+    public static long ITERATIONS = 1000; // Anzahl der zu durchlaufenen Iterationen (je mehr desto "schärfer")
     public static double REAL_LENGTH = 2.5; // Definiert die insgesamte Länge der Koordiantenachse(n) (-2 bis 0,5 ist 2,5)
     public static double SCALE = Properties.REAL_LENGTH / Properties.WINDOW_WIDTH;
-
-    final public static double ZOOM_FACTOR = 10;
-
-
-    final public static boolean GRADIENT = true; // Farbige Darstellung
 
 
 }
