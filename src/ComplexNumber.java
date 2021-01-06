@@ -33,10 +33,6 @@ public class ComplexNumber {
         return real;
     }
 
-    public Node getRectangle() {
-        return pixel.getRectangle();
-    }
-
     /**
      *
      * z = z² + c
