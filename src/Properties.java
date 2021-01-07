@@ -20,4 +20,6 @@ public class Properties {
 
     public static int ZOOM_FACTOR = 2;
 
+    public static boolean GROWING = false;
+
 }

@@ -25,7 +25,6 @@ public class Main  extends Application {
 
     int growingIteration = 0;
     Timer t;
-    boolean iterationGrowing = false;
 
     // Statische Mandelbrotmenge
     private Parent createContent() {
@@ -76,7 +75,7 @@ public class Main  extends Application {
             if (e.getCode() == KeyCode.ENTER) { // Bei Enter wird das Folgende ausgeführt
                 con.map.growing = true;
                 if (!con.map.zoomed) { // Wenn gezoomt ist werden Tasten ignoriert
-                    if (!iterationGrowing) {
+                    if (!Properties.GROWING) {
                         TimerTask tt = new TimerTask() {
                             @Override
                             public void run() {
@@ -86,7 +85,13 @@ public class Main  extends Application {
 
                                 System.out.println("Generating Map with " + growingIteration + " Iterations ...");
 
-                                con.map.generateMap();
+                                try {
+                                    con.map.generateMap();
+                                } catch (Exception e) {
+                                    System.err.println("Eine Exception (vermutlich NullPointerException) ist aus bislang ungeklärter Ursache aufgetreten.");
+                                    System.err.println("Bitte starten Sie das Programm neu.");
+                                    System.exit(2020);
+                                }
 
                             }
                         };
@@ -98,12 +103,12 @@ public class Main  extends Application {
                         t.cancel();
                     }
 
-                    iterationGrowing = !iterationGrowing;
+                    Properties.GROWING = !Properties.GROWING;
                 }
             }
 
             /* XX */
-            if (e.getCode() == KeyCode.UP && !iterationGrowing) { // Wenn Pfeiltaste + Iteration wächst aktuell nicht
+            if (e.getCode() == KeyCode.UP && !Properties.GROWING) { // Wenn Pfeiltaste + Iteration wächst aktuell nicht
                 Properties.ITERATIONS = growingIteration = (growingIteration < 30) ? growingIteration + 1 : growingIteration * 2;
 
                 System.out.println("Generating Map with " + growingIteration + " Iterations ...");
@@ -111,7 +116,7 @@ public class Main  extends Application {
                 con.map.generateMap();
             }
 
-            if (e.getCode() == KeyCode.DOWN && !iterationGrowing && growingIteration > 1) { // Wenn Pfeiltaste + Iteration wächst aktuell nicht
+            if (e.getCode() == KeyCode.DOWN && !Properties.GROWING && growingIteration > 1) { // Wenn Pfeiltaste + Iteration wächst aktuell nicht
                 Properties.ITERATIONS = growingIteration = (growingIteration <= 30) ? growingIteration - 1 : growingIteration / 2;
                 ;
 

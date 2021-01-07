@@ -68,10 +68,9 @@ public class Map {
 
                     if (z.getReal()<-2 || z.getReal()>0.5)
                         break;
-
                 }
 
-                // FIXME Entstehung fehlt
+
 
                 if (mapGrid[real][imag]==null) {
                     mapGrid[real][imag] = new ComplexNumber(realMath, imagMath, real, imag);
@@ -81,8 +80,14 @@ public class Map {
 
                     mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
                 } else {
-
-                    mapGrid[real][imag].upadateContent(realMath, imagMath, Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
+                    if (Properties.GROWING) {
+                        if (iterations==Properties.ITERATIONS-1)
+                            mapGrid[real][imag].upadateContent(realMath, imagMath, Color.rgb(0,0,0));
+                        else
+                            mapGrid[real][imag].upadateContent(realMath, imagMath, Color.rgb(255,255,255));
+                    } else {
+                        mapGrid[real][imag].upadateContent(realMath, imagMath, Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
+                    }
                 }
 
                 if (zoomed && (real==Properties.WINDOW_CENTER_HOR || imag==Properties.WINDOW_CENTER_VER))
