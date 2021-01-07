@@ -18,5 +18,6 @@ public class Properties {
     public static double REAL_LENGTH = 2.5; // Definiert die insgesamte Länge der Koordiantenachse(n) (-2 bis 0,5 ist 2,5)
     public static double SCALE = Properties.REAL_LENGTH / Properties.WINDOW_WIDTH;
 
+    public static int ZOOM_FACTOR = 2;
 
 }

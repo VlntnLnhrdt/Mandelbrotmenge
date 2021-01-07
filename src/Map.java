@@ -45,6 +45,8 @@ public class Map {
 
     void generateMap() {
 
+        Util.startTimer();
+
         ComplexNumber z;
         double realMath, imagMath;
         int iterations = 0;
@@ -77,7 +79,7 @@ public class Map {
                     mapGrid[real][imag].setColor(Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
 
 
-                    mapGroup.getChildren().add(mapGrid[real][imag].pixel.getRectangle());
+                    mapGroup.getChildren().add(mapGrid[real][imag].getRectangle());
                 } else {
 
                     mapGrid[real][imag].upadateContent(realMath, imagMath, Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
@@ -89,14 +91,14 @@ public class Map {
             }
         }
 
-        System.out.println("Speichergröße: " +mapGroup.getChildren().size());
+        Util.endTimer();
     }
 
     void generateMap(int xClick, int yClick) {
 
         if (!zoomed) {// Mandelbrotmenge wird in die Mitte verschoben
             System.out.println("Mittelung der Mandelbrotmenge mit Koordinatenachsen");
-            System.out.println(mapGrid[xClick][yClick].real+" "+mapGrid[xClick][yClick].imag+"i");
+//            System.out.println(mapGrid[xClick][yClick].getReal()+" "+mapGrid[xClick][yClick].getImag()+"i");
             zoomed = true;
 
             // Versetzen der Mandelbrotmenge in die Mitte
@@ -111,20 +113,16 @@ public class Map {
 
         } else {// Zoom
 
-            // TODO: 07.01.2021 X CN Abfragen
-            // TODO: 07.01.2021 X 2 for-Schleifen
-            // TODO: 07.01.2021 X "Start-C" erzeugen und mit "Start-CN" addieren bzw. subtrahieren
-            // TODO: 07.01.2021 X Rechnung durchführen
-            // TODO: 07.01.2021 X Farbberechnung
-            // TODO: 07.01.2021 X Grid zuweisen bzw. der Group
+            System.out.println("Zoom bei "+Util.getRounding(mapGrid[xClick][yClick].getReal(), mapGrid[xClick][yClick].getImag()));
+            Util.startTimer();
 
-            Properties.SCALE /= 10;
+            Properties.SCALE /= Properties.ZOOM_FACTOR;
 
             double realAddMove = Properties.WINDOW_CENTER_HOR*Properties.SCALE;
             double imagAddMove = Properties.WINDOW_CENTER_VER*Properties.SCALE;
 
-            double realStart = mapGrid[xClick][yClick].real - realAddMove ;
-            double imagStart = mapGrid[xClick][yClick].imag + imagAddMove;
+            double realStart = mapGrid[xClick][yClick].getReal() - realAddMove ;
+            double imagStart = mapGrid[xClick][yClick].getImag() + imagAddMove;
 
 
             ComplexNumber z;
@@ -150,7 +148,7 @@ public class Map {
                 }
             }
             
-            
+            Util.endTimer();
 
         }
     }

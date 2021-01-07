@@ -9,9 +9,15 @@ public class ComplexNumber {
      *
      */
 
-    Pixel pixel;
-    double real, realTemp;
-    double imag;
+    private Pixel pixel;
+    private double real, realTemp;
+    private double imag;
+
+    // TODO: 07.01.2021 IDEE Abspeichern der Durchläufe für Leistungsoptimierung
+    // TODO: 07.01.2021 maxIterationen speichern
+    // TODO: 07.01.2021 Farben abspeichern
+
+
 
     ComplexNumber(double real, double imag, int x, int y) {
         pixel = new Pixel(x,y);
@@ -31,6 +37,12 @@ public class ComplexNumber {
 
     public double getReal() {
         return real;
+    }
+    public double getImag() {
+        return imag;
+    }
+    public Node getRectangle() {
+        return pixel.getRectangle();
     }
 
     /**
