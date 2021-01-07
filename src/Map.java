@@ -31,7 +31,6 @@ public class Map {
     Group mapGroup;
     boolean zoomed = false; // Wenn gezoomt ist werden Tasten ignoriert
     boolean growing = false; // Wenn sie entsteht, wird die Maus ignoriert
-    boolean firstZoom = true; // Beim ersten Klicken werden die Koordinatenachsen angezeigt
     int mapHeight, mapWidth;
 
     /* (01) */
@@ -51,7 +50,7 @@ public class Map {
         int iterations = 0;
 
         for (int real = 0; real < mapGrid.length; real++) {
-            /* (06) */
+
             for (int imag = 0; imag < mapGrid[real].length; imag++) {
 
                 realMath = (real - Properties.WINDOW_CENTER_HOR) * Properties.SCALE;
@@ -110,34 +109,35 @@ public class Map {
 
             generateMap();
 
-            firstZoom = false;
         } else {// Zoom
 
-            // Links Oben beginnt die Darstellung mit dieser komplexen Zahl
-            ComplexNumber startingNumber = mapGrid[xClick][yClick];
+            // TODO: 07.01.2021 X CN Abfragen
+            // TODO: 07.01.2021 X 2 for-Schleifen
+            // TODO: 07.01.2021 X "Start-C" erzeugen und mit "Start-CN" addieren bzw. subtrahieren
+            // TODO: 07.01.2021 X Rechnung durchführen
+            // TODO: 07.01.2021 X Farbberechnung
+            // TODO: 07.01.2021 X Grid zuweisen bzw. der Group
+
+            Properties.SCALE /= 10;
+
+            double realAddMove = Properties.WINDOW_CENTER_HOR*Properties.SCALE;
+            double imagAddMove = Properties.WINDOW_CENTER_VER*Properties.SCALE;
+
+            double realStart = mapGrid[xClick][yClick].real - realAddMove ;
+            double imagStart = mapGrid[xClick][yClick].imag + imagAddMove;
+
 
             ComplexNumber z;
-
-            System.out.println(startingNumber.real+" "+startingNumber.imag+"i");
-
-            Properties.SCALE /= 2;
-
-            double realMath, imagMath;
             int iterations = 0;
 
+            for (int real = 0; real<mapGrid.length; real++) {
+                for (int imag = 0; imag<mapGrid[real].length; imag++) {
 
-            for (int real = 0; real < mapGrid.length; real++) {
+                    z = new ComplexNumber(realStart+(real*Properties.SCALE),imagStart-(imag*Properties.SCALE),real,imag);
 
-                for (int imag = 0; imag < mapGrid[real].length; imag++) {
-
-                    realMath = startingNumber.real + real*Properties.SCALE;
-                    imagMath = startingNumber.imag - imag*Properties.SCALE;
-
-                    z = new ComplexNumber(realMath,imagMath, real, imag);
-
-                    for (int i = 0; i<Properties.ITERATIONS;i++) {
+                    for (int i=0; i<Properties.ITERATIONS;i++){
                         z.square();
-                        z.adding(realMath, imagMath);
+                        z.adding(realStart+(real*Properties.SCALE), imagStart-(imag*Properties.SCALE));
 
                         iterations = i;
 
@@ -145,10 +145,12 @@ public class Map {
                             break;
                     }
 
-                    mapGrid[real][imag].upadateContent(realMath, imagMath, Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
+                    mapGrid[real][imag].upadateContent(realStart+(real*Properties.SCALE), imagStart-(imag*Properties.SCALE), Color.rgb(0, iterations < 256 ? iterations / 2 : 0, iterations < 256 ? iterations : 0));
 
                 }
             }
+            
+            
 
         }
     }
